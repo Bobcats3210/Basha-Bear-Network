@@ -173,7 +173,7 @@
     position: absolute;
     inset: 0;
     opacity: 0.03;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='https://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
     background-size: 256px;
   }
   .on-air-badge {
@@ -631,7 +631,7 @@
   }
   .team-card:hover { border-color: rgba(212,160,23,0.3); }
   .team-avatar {
-    height: 100px;
+    height: 140px;
     background: linear-gradient(135deg, var(--green-dark), var(--surface3));
     display: flex;
     align-items: center;
@@ -639,6 +639,13 @@
     font-size: 36px;
     position: relative;
     overflow: hidden;
+  }
+  .team-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 15%;
+    display: block;
   }
   .team-avatar::after {
     content: '';
@@ -833,7 +840,7 @@
   .featured-header { margin-bottom: 52px; }
   .featured-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 24px;
   }
   .video-card {
@@ -910,7 +917,7 @@
     transition: gap 0.2s;
   }
   .video-link:hover { gap: 10px; }
-  @media (max-width: 1000px) {
+  @media (max-width: 700px) {
     .featured-grid { grid-template-columns: 1fr; }
   }
 
@@ -1048,6 +1055,287 @@
     .podcasts-grid { grid-template-columns: 1fr; }
   }
 
+
+  /* ─── WATCH (live + latest) ─── */
+  .watch {
+    background: linear-gradient(180deg, var(--black) 0%, var(--surface) 100%);
+    padding-top: 90px;
+    padding-bottom: 90px;
+    position: relative;
+    overflow: hidden;
+  }
+  .watch::before {
+    content: '';
+    position: absolute;
+    top: -200px; right: -200px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(43,81,53,0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .watch-header {
+    max-width: 720px;
+    margin-bottom: 48px;
+    position: relative;
+    z-index: 1;
+  }
+  .watch-intro {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--text-dim);
+    margin-top: 22px;
+    max-width: 580px;
+  }
+  .watch-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    position: relative;
+    z-index: 1;
+  }
+  .watch-card {
+    background: var(--surface2);
+    border: 1px solid rgba(240,236,232,0.07);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: all 0.3s;
+  }
+  .watch-card:hover {
+    border-color: rgba(249,223,141,0.2);
+  }
+  .watch-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 18px 22px;
+    border-bottom: 1px solid rgba(240,236,232,0.06);
+  }
+  .watch-card-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+  .watch-pulse {
+    width: 10px; height: 10px;
+    background: var(--on-air);
+    border-radius: 50%;
+    position: relative;
+    animation: pulse-dot 1.5s ease-in-out infinite;
+  }
+  .watch-pulse::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    background: var(--on-air);
+    opacity: 0.3;
+    animation: pulse-ring 2s ease-out infinite;
+  }
+  @keyframes pulse-ring {
+    0% { transform: scale(0.7); opacity: 0.5; }
+    100% { transform: scale(2); opacity: 0; }
+  }
+  .watch-new {
+    width: 10px; height: 10px;
+    background: var(--gold);
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(249,223,141,0.6);
+  }
+  .watch-embed {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%;
+    background: var(--black);
+    overflow: hidden;
+  }
+  .watch-embed iframe {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  .watch-offline {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 32px;
+    background: linear-gradient(135deg, var(--green-dark) 0%, var(--surface2) 100%);
+    color: var(--text);
+  }
+  .watch-offline-icon {
+    font-size: 44px;
+    margin-bottom: 14px;
+    opacity: 0.8;
+  }
+  .watch-offline-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    letter-spacing: 2px;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+  .watch-offline-text {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.55;
+    max-width: 320px;
+    margin-bottom: 22px;
+  }
+  .watch-offline-btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--black);
+    background: var(--gold);
+    padding: 10px 22px;
+    border-radius: 3px;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .watch-offline-btn:hover { background: var(--gold-bright); }
+  /* When live, the pulse dot pulses red; when offline, it's dim gold */
+  .watch-pulse.offline {
+    background: var(--gold-dim);
+    animation: none;
+  }
+  .watch-pulse.offline::after { display: none; }
+
+  .watch-note {
+    padding: 16px 22px 20px;
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.55;
+  }
+  .watch-note a {
+    color: var(--gold);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(249,223,141,0.3);
+  }
+  .watch-note a:hover {
+    border-color: var(--gold);
+  }
+  @media (max-width: 900px) {
+    .watch-grid { grid-template-columns: 1fr; }
+  }
+
+
+  /* ─── BBN SPORTS ─── */
+  .bbn-sports {
+    background: var(--black);
+    position: relative;
+    overflow: hidden;
+  }
+  .bbn-sports::before {
+    content: '';
+    position: absolute;
+    top: 10%; right: -150px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(43,81,53,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .sports-header {
+    margin-bottom: 56px;
+    max-width: 720px;
+    position: relative;
+    z-index: 1;
+  }
+  .sports-intro {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--text-dim);
+    margin-top: 22px;
+    max-width: 560px;
+  }
+  .sports-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
+    position: relative;
+    z-index: 1;
+  }
+  .sports-card {
+    background: var(--surface2);
+    border: 1px solid rgba(240,236,232,0.07);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: all 0.3s;
+    position: relative;
+  }
+  .sports-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--green-bright), var(--gold));
+    opacity: 0.7;
+  }
+  .sports-card:hover {
+    border-color: rgba(249,223,141,0.25);
+    transform: translateY(-3px);
+  }
+  .sports-embed {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%;
+    background: var(--black);
+    overflow: hidden;
+  }
+  .sports-embed iframe {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  .sports-info { padding: 20px 24px 22px; }
+  .sports-sport {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .sports-card h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 1px;
+    color: var(--text);
+    line-height: 1.1;
+    margin-bottom: 6px;
+  }
+  .sports-card p {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+  .sports-footer {
+    margin-top: 36px;
+    text-align: center;
+  }
+  /* Competition section gets the same intro paragraph styling */
+  .featured-intro {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--text-dim);
+    margin-top: 22px;
+    max-width: 560px;
+  }
+  @media (max-width: 900px) {
+    .sports-grid { grid-template-columns: 1fr; }
+  }
+
   /* ─── RESPONSIVE ─── */
   @media (max-width: 1000px) {
     nav { padding: 0 24px; }
@@ -1070,3 +1358,157 @@
     footer { grid-template-columns: 1fr; }
     .about-cards-grid { grid-template-columns: 1fr; }
   }
+/* ───────────────────────────────────────────────────────────────
+   HERO BADGE — width lock + brand mode (idle days)
+   Added: rotating EST. 2022 / WEEKLY NEWS labels in gold/green
+   when not live and not Thursday recording day.
+   ─────────────────────────────────────────────────────────────── */
+
+/* Lock badge width so it doesn't wobble between text lengths
+   (ON AIR / RECORDING / EST. 2022 / WEEKLY NEWS) */
+.on-air-badge {
+  min-width: 150px;
+  justify-content: center;
+}
+
+/* BRAND MODE — applied by JS on idle days (not Thursday, not live).
+   Both labels (EST. 2022 / WEEKLY NEWS) use the same gold + green scheme;
+   text content rotates every 4s. Overrides the default red background,
+   border, dot, and text colors of .on-air-badge. */
+.on-air-badge.brand-mode {
+  background: var(--gold);
+  border-color: var(--gold);
+}
+.on-air-badge.brand-mode .on-air-dot {
+  background: var(--green);
+}
+.on-air-badge.brand-mode .on-air-text {
+  color: var(--green);
+}
+
+/* ───────────────────────────────────────────────────────────────
+   SOCIAL SECTION — Instagram / YouTube / X cards
+   Three-up grid with platform-colored icons, BBN-styled cards.
+   ─────────────────────────────────────────────────────────────── */
+
+.social-section {
+  max-width: 1200px;
+  margin: 80px auto;
+  padding: 0 40px;
+}
+
+.social-header {
+  text-align: center;
+  margin-bottom: 56px;
+}
+
+.social-intro {
+  font-family: 'Barlow', sans-serif;
+  font-size: 18px;
+  color: var(--text-dim);
+  margin-top: 16px;
+  font-weight: 300;
+}
+
+.social-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.social-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 24px 28px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(249, 223, 141, 0.12);
+  border-radius: 14px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s ease;
+}
+
+.social-card:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(249, 223, 141, 0.4);
+  transform: translateY(-2px);
+}
+
+.social-icon {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.social-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+/* Platform brand colors on icon */
+.social-card[data-platform="instagram"] .social-icon {
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  color: #fff;
+}
+
+.social-card[data-platform="youtube"] .social-icon {
+  background: #ff0000;
+  color: #fff;
+}
+
+.social-card[data-platform="x"] .social-icon {
+  background: #000;
+  color: #fff;
+}
+
+.social-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.social-platform {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  letter-spacing: 1.5px;
+  color: var(--text);
+  line-height: 1;
+}
+
+.social-handle {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 14px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  margin-top: 4px;
+  text-transform: lowercase;
+}
+
+.social-arrow {
+  font-size: 22px;
+  color: var(--gold);
+  opacity: 0.5;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.social-card:hover .social-arrow {
+  opacity: 1;
+  transform: translate(2px, -2px);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .social-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .social-section {
+    margin: 60px auto;
+    padding: 0 20px;
+  }
+}
