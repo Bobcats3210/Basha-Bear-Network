@@ -5,43 +5,47 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BBN — Basha Bear Network</title>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<meta name="theme-color" content="#2b5135">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 <!-- Google Analytics (GA4) -->
-<!-- Replace G-XXXXXXXXXX with your real Measurement ID from https://analytics.google.com -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<!-- Replace G-64YEBVKBSX with your real Measurement ID from https://analytics.google.com -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-64YEBVKBSX"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-XXXXXXXXXX', {
+  gtag('config', 'G-64YEBVKBSX', {
     page_title: 'Basha Bear Network',
     send_page_view: true
   });
 
-// Custom event tracking for key BBN interactions
-document.addEventListener(‘DOMContentLoaded’, function() {
-// Track Watch Our Shows button (hero CTA)
-document.querySelectorAll(‘a[href*=“playlist?list=PLk3YT4kiAMW”]’).forEach(el => {
-el.addEventListener(‘click’, () => gtag(‘event’, ‘watch_shows_click’, { event_category: ‘CTA’, event_label: ‘Hero - YouTube Playlist’ }));
-});
-// Track Apply / Email Us
-document.querySelectorAll(‘a[href^=“mailto:”]’).forEach(el => {
-el.addEventListener(‘click’, () => gtag(‘event’, ‘email_click’, { event_category: ‘Contact’, event_label: el.textContent.trim() }));
-});
-// Track social links
-document.querySelectorAll(‘a[href*=“instagram.com”], a[href*=“youtube.com”], a[href*=“x.com”]’).forEach(el => {
-el.addEventListener(‘click’, () => gtag(‘event’, ‘social_click’, { event_category: ‘Social’, event_label: el.href }));
-});
-// Track Join button + nav anchor clicks
-document.querySelectorAll(‘a[href^=”#”]’).forEach(el => {
-el.addEventListener(‘click’, () => gtag(‘event’, ‘nav_click’, { event_category: ‘Navigation’, event_label: el.getAttribute(‘href’) }));
-});
-});
+  // Custom event tracking for key BBN interactions
+  document.addEventListener('DOMContentLoaded', function() {
+    // Track Watch Our Shows button (hero CTA)
+    document.querySelectorAll('a[href*="playlist?list=PLk3YT4kiAMW"]').forEach(el => {
+      el.addEventListener('click', () => gtag('event', 'watch_shows_click', { event_category: 'CTA', event_label: 'Hero - YouTube Playlist' }));
+    });
+    // Track Apply / Email Us
+    document.querySelectorAll('a[href*="mail.google.com"], a[href^="mailto:"]').forEach(el => {
+      el.addEventListener('click', () => gtag('event', 'email_click', { event_category: 'Contact', event_label: el.textContent.trim() }));
+    });
+    // Track social links
+    document.querySelectorAll('a[href*="instagram.com"], a[href*="youtube.com"], a[href*="x.com"]').forEach(el => {
+      el.addEventListener('click', () => gtag('event', 'social_click', { event_category: 'Social', event_label: el.href }));
+    });
+    // Track Join button + nav anchor clicks
+    document.querySelectorAll('a[href^="#"]').forEach(el => {
+      el.addEventListener('click', () => gtag('event', 'nav_click', { event_category: 'Navigation', event_label: el.getAttribute('href') }));
+    });
+  });
 </script>
-
 <!-- End Google Analytics -->
 
 </head>
@@ -53,13 +57,13 @@ el.addEventListener(‘click’, () => gtag(‘event’, ‘nav_click’, { even
   <div class="ticker-label">📡 BBN LIVE</div>
   <div class="ticker-track">
     <span>Basha Bear Network — Chandler's Award-Winning Student Broadcast</span>
-    <span>STN 2026 — Tampa, FL</span>
-    <span>Now Accepting Applications for Next Year's Crew</span>
+    <span>STN 2027 — Long Beach, CA</span>
+    <span>Year 1 → Year 2: Take MultiMedia &amp; Film to Join</span>
     <span>New Episodes Every Week</span>
     <span>Follow us @bashabearnetwork</span>
     <span>Basha Bear Network — Chandler's Award-Winning Student Broadcast</span>
-    <span>STN 2026 — Tampa, FL</span>
-    <span>Now Accepting Applications for Next Year's Crew</span>
+    <span>STN 2027 — Long Beach, CA</span>
+    <span>Year 1 → Year 2: Take MultiMedia &amp; Film to Join</span>
     <span>New Episodes Every Week</span>
     <span>Follow us @bashabearnetwork</span>
   </div>
@@ -73,14 +77,16 @@ el.addEventListener(‘click’, () => gtag(‘event’, ‘nav_click’, { even
     <div class="nav-wordmark"><span>BB</span>N</div>
   </a>
   <ul class="nav-links">
+    <li><a href="#watch">News</a></li>
+    <li><a href="#sports">Sports</a></li>
     <li><a href="#about">About</a></li>
     <li><a href="#shows">Shows</a></li>
     <li><a href="#podcasts">Podcasts</a></li>
-    <li><a href="#featured">Featured</a></li>
+    <li><a href="#competition">Competition</a></li>
     <li><a href="#team">Team</a></li>
     <li><a href="#join">Join</a></li>
   </ul>
-  <a href="#join" class="nav-cta">Apply Now</a>
+  <a href="https://mail.google.com/mail/?view=cm&fs=1&to=skalitzky.glenda%40cusd80.com&su=Hello+BBN&body=Hi+BBN%2C%0A%0A%5BYour+message+here%5D%0A%0AThanks%21" target="_blank" rel="noopener" class="nav-cta">Contact Us</a>
 </nav>
 
 <!-- HERO -->
@@ -111,7 +117,7 @@ el.addEventListener(‘click’, () => gtag(‘event’, ‘nav_click’, { even
     </div>
     <div class="hero-stat">
       <div class="stat-num">STN</div>
-      <div class="stat-label">Convention Bound 2026</div>
+      <div class="stat-label">Convention Bound 2027</div>
     </div>
     <div class="hero-stat">
       <div class="stat-num">100%</div>
@@ -124,14 +130,52 @@ el.addEventListener(‘click’, () => gtag(‘event’, ‘nav_click’, { even
   </div>
 </section>
 
+<!-- WATCH (Live + Latest, auto-updating) -->
+
+<section class="watch" id="watch">
+  <div class="watch-header">
+    <div class="section-label">Watch BBN</div>
+    <h2 class="section-title">LIVE &amp; LATEST</h2>
+    <p class="watch-intro">Tune in to our live broadcasts or catch the most recent episode of Basha Bear News — automatically updated whenever we go live or post.</p>
+  </div>
+  <div class="watch-grid">
+    <div class="watch-card" id="live-card">
+      <div class="watch-card-header">
+        <div class="watch-pulse offline" id="live-indicator"></div>
+        <span class="watch-card-label" id="live-status-label">Off Air</span>
+      </div>
+      <div class="watch-embed" id="live-embed-wrap">
+        <div class="watch-offline" id="live-offline">
+          <div class="watch-offline-icon">📡</div>
+          <div class="watch-offline-title">Currently Off Air</div>
+          <div class="watch-offline-text">When BBN goes live for sports, news, or special broadcasts, the stream will appear here automatically.</div>
+          <a href="https://www.youtube.com/@bashabearnetwork/live" target="_blank" rel="noopener" class="watch-offline-btn">Check on YouTube →</a>
+        </div>
+        <iframe id="live-embed" style="display:none;" title="BBN Live Stream" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+      </div>
+      <p class="watch-note" id="live-note">Subscribe on <a href="https://www.youtube.com/@bashabearnetwork" target="_blank" rel="noopener">YouTube</a> to get notified when we go live.</p>
+    </div>
+    <div class="watch-card">
+      <div class="watch-card-header">
+        <div class="watch-new"></div>
+        <span class="watch-card-label">Latest Episode</span>
+      </div>
+      <div class="watch-embed">
+        <iframe id="latest-episode-embed" src="https://www.youtube-nocookie.com/embed/videoseries?list=PLk3YT4kiAMWmCY2ZQiKBitpF5NP2DAilZ" title="Latest BBN Episode" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+      </div>
+      <p class="watch-note" id="latest-episode-title">Loading the most recent episode…</p>
+    </div>
+  </div>
+</section>
+
 <!-- ABOUT -->
 
 <section class="about" id="about">
   <div class="about-copy">
     <div class="section-label">Who We Are</div>
     <h2 class="section-title">TELLING<br>BASHA'S<br>STORY</h2>
-    <p>The <strong>Basha Bear Network</strong> is Basha High School's student-run broadcast and media program. From breaking news to sports highlights, we cover every story that matters to the Bear community.</p>
-    <p>Our team of student journalists, producers, editors, and on-air talent works together to create professional-quality content — gaining real-world skills in <strong>broadcast journalism, video production, audio engineering, and digital media.</strong></p>
+    <p>Established in <strong>August 2022</strong>, the Basha Bear Network is Basha High School's student-run broadcast and media program, housed within the TV and Film Production class. From breaking news to sports highlights, our student journalists record, edit, and produce original media covering school events and the broader community.</p>
+    <p>Every <strong>Friday at 10:30 AM</strong> we premiere our weekly newscast. Throughout the year, we also produce live sports broadcasts, podcasts, and social media content — gaining real-world skills in <strong>broadcast journalism, video production, audio engineering, and digital media.</strong></p>
   </div>
   <div class="about-visual">
     <div class="about-cards-grid">
@@ -169,27 +213,27 @@ el.addEventListener(‘click’, () => gtag(‘event’, ‘nav_click’, { even
     </div>
   </div>
   <div class="shows-grid">
-    <div class="show-card">
+    <a href="#watch" class="show-card" style="text-decoration:none;color:inherit;">
       <div class="show-tag">Daily News</div>
       <div class="show-arrow">↗</div>
       <h3>Basha Bear News</h3>
-      <p>Your daily rundown of everything happening at Basha — announcements, events, and the stories that matter.</p>
+      <p>Your weekly rundown of everything happening at Basha — announcements, events, and the stories that matter.</p>
       <div class="show-num">01</div>
-    </div>
-    <div class="show-card">
+    </a>
+    <a href="#sports" class="show-card" style="text-decoration:none;color:inherit;">
       <div class="show-tag">Sports</div>
       <div class="show-arrow">↗</div>
       <h3>BBN Sports</h3>
-      <p>Highlights, scores, and athlete spotlights from every sport on the Basha campus.</p>
+      <p>Full-game livestreams of Basha Bears football, basketball, volleyball, and more — with play-by-play, color commentary, and sideline reporting.</p>
       <div class="show-num">02</div>
-    </div>
-    <div class="show-card">
+    </a>
+    <a href="#competition" class="show-card" style="text-decoration:none;color:inherit;">
       <div class="show-tag">Competition</div>
       <div class="show-arrow">↗</div>
       <h3>Competition</h3>
       <p>Award-winning student productions created for STN, regional, and national broadcast competitions.</p>
       <div class="show-num">03</div>
-    </div>
+    </a>
     <a href="#podcasts" class="show-card" style="text-decoration:none;color:inherit;">
       <div class="show-tag">Sports Podcast</div>
       <div class="show-arrow">↗</div>
@@ -207,6 +251,61 @@ el.addEventListener(‘click’, () => gtag(‘event’, ‘nav_click’, { even
   </div>
 </section>
 
+<!-- BBN SPORTS — Previous livestream archive -->
+
+<section class="bbn-sports" id="sports">
+  <div class="sports-header">
+    <div class="section-label">BBN Sports</div>
+    <h2 class="section-title">FROM THE<br>BEAR DEN</h2>
+    <p class="sports-intro">Catch the replays from our full-game livestreams — Basha Bears football, basketball, volleyball, and more. Play-by-play by Tate, color commentary by Jackson, sideline reporting by Maddelynn.</p>
+  </div>
+  <div class="sports-grid">
+    <div class="sports-card">
+      <div class="sports-embed">
+        <iframe src="https://www.youtube-nocookie.com/embed/4Jkeug0ZSws" title="Varsity Football: Basha Bears vs. Tucson Salpointe Catholic" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+      </div>
+      <div class="sports-info">
+        <div class="sports-sport">🏈 Varsity Football</div>
+        <h3>Basha Bears vs. Salpointe Catholic</h3>
+        <p>Hosted at Jim Wall Stadium · October 2025</p>
+      </div>
+    </div>
+    <div class="sports-card">
+      <div class="sports-embed">
+        <iframe src="https://www.youtube-nocookie.com/embed/N5RJXp2RbGw" title="Varsity Basketball: Basha Bears vs. Perry Pumas" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+      </div>
+      <div class="sports-info">
+        <div class="sports-sport">🏀 Varsity Basketball</div>
+        <h3>Battle of Val Vista — vs. Perry Pumas</h3>
+        <p>Girls + Boys Varsity Doubleheader · January 2026</p>
+      </div>
+    </div>
+    <div class="sports-card">
+      <div class="sports-embed">
+        <iframe src="https://www.youtube-nocookie.com/embed/dHUGW4iOtlc" title="Boys Basketball: Basha Bears vs. Chandler Wolves" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+      </div>
+      <div class="sports-info">
+        <div class="sports-sport">🏀 Boys Basketball</div>
+        <h3>Basha Bears vs. Chandler Wolves</h3>
+        <p>JV + Varsity Doubleheader · February 2026</p>
+      </div>
+    </div>
+    <div class="sports-card">
+      <div class="sports-embed">
+        <iframe src="https://www.youtube-nocookie.com/embed/F15ZV4cjXJY" title="Varsity Volleyball: Basha Bears vs. Casteel Colts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+      </div>
+      <div class="sports-info">
+        <div class="sports-sport">🏐 Varsity Volleyball</div>
+        <h3>Basha Bears vs. Casteel Colts</h3>
+        <p>Hosted at the Bear Den · October 2025</p>
+      </div>
+    </div>
+  </div>
+  <div class="sports-footer">
+    <a href="https://www.youtube.com/@bashabearnetwork/streams" target="_blank" rel="noopener" class="btn-ghost">View All Sports Streams →</a>
+  </div>
+</section>
+
 <!-- PODCASTS -->
 
 <section class="podcasts" id="podcasts">
@@ -218,14 +317,14 @@ el.addEventListener(‘click’, () => gtag(‘event’, ‘nav_click’, { even
   <div class="podcasts-grid">
     <div class="podcast-card">
       <div class="podcast-embed">
-        <iframe src="https://www.youtube-nocookie.com/embed/DykVxWOGHzw" title="Table Talk Podcast" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <iframe src="https://www.youtube-nocookie.com/embed/7aOJlQRk1aA" title="Table Talk Podcast" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
       </div>
       <div class="podcast-info">
         <div class="podcast-tag">Sports Podcast</div>
         <h3>Table Talk</h3>
-        <div class="podcast-hosts">Hosted by Tate · Produced by Christian</div>
-        <p class="podcast-desc">The BBN sports podcast — sit down with Basha athletes for in-depth conversations about their careers, commitments, and what it means to be a Bear.</p>
-        <a href="https://www.youtube.com/watch?v=DykVxWOGHzw" target="_blank" rel="noopener" class="podcast-link">Watch on YouTube →</a>
+        <div class="podcast-hosts">Hosted by Tate &amp; Rhys · Produced by Christian</div>
+        <p class="podcast-desc">The BBN sports podcast — sit down with Basha athletes and coaches for in-depth conversations about their seasons, careers, and what it means to be a Bear.</p>
+        <a href="https://www.youtube.com/watch?v=7aOJlQRk1aA" target="_blank" rel="noopener" class="podcast-link">Watch on YouTube →</a>
       </div>
     </div>
     <div class="podcast-card">
@@ -235,7 +334,7 @@ el.addEventListener(‘click’, () => gtag(‘event’, ‘nav_click’, { even
       <div class="podcast-info">
         <div class="podcast-tag">All-Girls Podcast</div>
         <h3>Basha Bear Buzz</h3>
-        <div class="podcast-hosts">Hosted by Madison &amp; Shruthi</div>
+        <div class="podcast-hosts">Hosted by Shruthi, Madison &amp; Ella</div>
         <p class="podcast-desc">BBN's all-girls podcast covering everything from marching band and music drops to campus culture and the conversations Basha students are actually having.</p>
         <a href="https://www.youtube.com/watch?v=NZkM-kyw9eo" target="_blank" rel="noopener" class="podcast-link">Watch on YouTube →</a>
       </div>
@@ -280,8 +379,8 @@ el.addEventListener(‘click’, () => gtag(‘event’, ‘nav_click’, { even
     <div class="award-card">
       <div class="award-medal">⭐</div>
       <div class="award-rank">Nominees</div>
-      <h3>Student Emmy Awards</h3>
-      <p class="award-sub">Multiple BBN students nominated for student Emmy recognition</p>
+      <h3>Student Production Awards</h3>
+      <p class="award-sub">Multiple BBN students nominated for Student Production Award recognition</p>
     </div>
     <div class="award-card">
       <div class="award-medal">🐻</div>
@@ -294,10 +393,11 @@ el.addEventListener(‘click’, () => gtag(‘event’, ‘nav_click’, { even
 
 <!-- FEATURED WORK -->
 
-<section class="featured-work" id="featured">
+<section class="featured-work" id="competition">
   <div class="featured-header">
-    <div class="section-label">Featured Work</div>
-    <h2 class="section-title">AWARD-WINNING<br>PRODUCTIONS</h2>
+    <div class="section-label">Competition</div>
+    <h2 class="section-title">COMPETITION<br>HIGHLIGHTS</h2>
+    <p class="featured-intro">Award-winning student productions submitted to STN, Rocky Mountain Student Production Awards, and regional broadcast competitions.</p>
   </div>
   <div class="featured-grid">
     <div class="video-card">
@@ -324,13 +424,24 @@ el.addEventListener(‘click’, () => gtag(‘event’, ‘nav_click’, { even
     </div>
     <div class="video-card">
       <div class="video-embed">
-        <iframe src="https://www.youtube-nocookie.com/embed/3BwS573kPew" title="Basha Bear News Episode 6 - Four Rocky Mountain Awards" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <iframe src="https://www.youtube-nocookie.com/embed/3BwS573kPew" title="Basha Bear News Episode 6 - Student Production Awards" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
       </div>
       <div class="video-info">
-        <div class="video-award">🎬 4× Rocky Mountain Awards</div>
+        <div class="video-award">⭐ Student Production Awards</div>
         <h3>Basha Bear News — Episode 6</h3>
-        <p>The episode where BBN was honored with four Rocky Mountain Student Production Awards, plus campus coverage from JROTC and more.</p>
+        <p>The episode showcasing BBN's Student Production Award recognition, plus campus coverage from JROTC and more.</p>
         <a href="https://www.youtube.com/watch?v=3BwS573kPew" target="_blank" rel="noopener" class="video-link">Watch on YouTube →</a>
+      </div>
+    </div>
+    <div class="video-card">
+      <div class="video-embed">
+        <iframe src="https://www.youtube-nocookie.com/embed/WozflUSXHmI" title="Basha Bear News Episode 19 - STN Broadcast Excellence" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+      </div>
+      <div class="video-info">
+        <div class="video-award">📺 STN Broadcast Excellence</div>
+        <h3>Basha Bear News — Episode 19</h3>
+        <p>The episode that earned BBN the Student Television Network's Broadcast Excellence recognition — among the nation's top student broadcasts.</p>
+        <a href="https://www.youtube.com/watch?v=WozflUSXHmI" target="_blank" rel="noopener" class="video-link">Watch on YouTube →</a>
       </div>
     </div>
   </div>
@@ -345,119 +456,119 @@ el.addEventListener(‘click’, () => gtag(‘event’, ‘nav_click’, { even
   </div>
   <div class="team-grid">
     <div class="team-card">
-      <div class="team-avatar">🎙️</div>
+      <div class="team-avatar"><img src="officers/Tate.png" alt="Tate Fitzpatrick"></div>
       <div class="team-info">
-        <div class="team-name">Tate</div>
-        <div class="team-role">Co-President · Play-By-Play Commentator · Editor</div>
+        <div class="team-name">Tate Fitzpatrick</div>
+        <div class="team-role">Co-President · Play-By-Play Commentator · Table Talk Host · Reporter · Editor</div>
       </div>
     </div>
     <div class="team-card">
-      <div class="team-avatar">📺</div>
+      <div class="team-avatar"><img src="officers/Maddy.png" alt="Maddelynn Smith"></div>
       <div class="team-info">
-        <div class="team-name">Maddelynn</div>
-        <div class="team-role">Co-President · Anchor · Sideline Reporter</div>
+        <div class="team-name">Maddelynn Smith</div>
+        <div class="team-role">Co-President · Anchor · Reporter · Sideline Reporter</div>
       </div>
     </div>
     <div class="team-card">
-      <div class="team-avatar">⭐</div>
+      <div class="team-avatar"><img src="officers/Shruthi.png" alt="Shruthi Rajesh"></div>
       <div class="team-info">
-        <div class="team-name">Shruthi</div>
-        <div class="team-role">VP · Producer · Newscast Director · Sports Director · Buzz Host · Editor</div>
+        <div class="team-name">Shruthi Rajesh</div>
+        <div class="team-role">VP · Producer · Newscast Director · Sports Director · Bear Buzz Host · Editor</div>
       </div>
     </div>
     <div class="team-card">
-      <div class="team-avatar">📋</div>
+      <div class="team-avatar"><img src="officers/Jackson.PNG" alt="Jackson McDonald"></div>
       <div class="team-info">
-        <div class="team-name">Jackson</div>
-        <div class="team-role">Secretary · Color Commentator · Editor</div>
+        <div class="team-name">Jackson McDonald</div>
+        <div class="team-role">Secretary · Color Commentator · Reporter · Editor</div>
       </div>
     </div>
     <div class="team-card">
-      <div class="team-avatar">💼</div>
+      <div class="team-avatar"><img src="officers/Madison.PNG" alt="Madison Weitz"></div>
       <div class="team-info">
-        <div class="team-name">Madison</div>
-        <div class="team-role">Treasurer · Floor Director · Buzz Host · Editor</div>
+        <div class="team-name">Madison Weitz</div>
+        <div class="team-role">Treasurer · Floor Director · Bear Buzz Host · Reporter · Editor</div>
       </div>
     </div>
     <div class="team-card">
-      <div class="team-avatar">⚙️</div>
+      <div class="team-avatar"><img src="officers/Christian.png" alt="Christian Damiano"></div>
       <div class="team-info">
-        <div class="team-name">Christian</div>
+        <div class="team-name">Christian Damiano</div>
         <div class="team-role">Operations Manager Director · Producer · Sports Director · Editor</div>
       </div>
     </div>
     <div class="team-card">
       <div class="team-avatar">🖥️</div>
       <div class="team-info">
-        <div class="team-name">Carson</div>
+        <div class="team-name">Carson Fugere</div>
         <div class="team-role">Operations Manager · Graphics & Branding · Editor</div>
       </div>
     </div>
     <div class="team-card">
-      <div class="team-avatar">📱</div>
+      <div class="team-avatar"><img src="officers/Yinuo.png" alt="Yinuo"></div>
       <div class="team-info">
         <div class="team-name">Yinuo</div>
         <div class="team-role">Social Media & Competition Manager · Editor</div>
       </div>
     </div>
     <div class="team-card">
-      <div class="team-avatar">🎨</div>
+      <div class="team-avatar"><img src="officers/Colin.PNG" alt="Colin Melvin"></div>
       <div class="team-info">
-        <div class="team-name">Micah</div>
-        <div class="team-role">Producer · Newscast Director · Sports Director · Graphics & Branding · Editor</div>
+        <div class="team-name">Colin Melvin</div>
+        <div class="team-role">WTW Reporter · Social Media & Competition Manager · Editor</div>
       </div>
     </div>
     <div class="team-card">
-      <div class="team-avatar">🎤</div>
+      <div class="team-avatar">🎨</div>
       <div class="team-info">
-        <div class="team-name">Abby</div>
+        <div class="team-name">Micah Cederbaum</div>
+        <div class="team-role">Producer · Newscast Technical Director · Sports Director · Graphics & Branding · Editor</div>
+      </div>
+    </div>
+    <div class="team-card">
+      <div class="team-avatar"><img src="officers/Abby.PNG" alt="Abby McAdoo"></div>
+      <div class="team-info">
+        <div class="team-name">Abby McAdoo</div>
         <div class="team-role">Anchor</div>
       </div>
     </div>
     <div class="team-card">
       <div class="team-avatar">🏀</div>
       <div class="team-info">
-        <div class="team-name">Rhys</div>
-        <div class="team-role">Sports Commentator · Editor</div>
+        <div class="team-name">Rhys Thompson</div>
+        <div class="team-role">Sports Commentator · Table Talk Host · Editor</div>
       </div>
     </div>
     <div class="team-card">
-      <div class="team-avatar">⚖️</div>
+      <div class="team-avatar"><img src="officers/Ronin.PNG" alt="Ronin Slattery"></div>
       <div class="team-info">
         <div class="team-name">Ronin Slattery</div>
         <div class="team-role">Rules Analyst · Grizzly Grind Reporter · Editor</div>
       </div>
     </div>
     <div class="team-card">
-      <div class="team-avatar">💬</div>
+      <div class="team-avatar"><img src="officers/Gabe.PNG" alt="Gabe Encinas"></div>
       <div class="team-info">
-        <div class="team-name">Colin</div>
-        <div class="team-role">WTW Reporter · Social Media & Competition Manager · Editor</div>
-      </div>
-    </div>
-    <div class="team-card">
-      <div class="team-avatar">🌦️</div>
-      <div class="team-info">
-        <div class="team-name">Gabe</div>
+        <div class="team-name">Gabe Encinas</div>
         <div class="team-role">Weather Reporter · Editor</div>
       </div>
     </div>
     <div class="team-card">
-      <div class="team-avatar">🐻</div>
+      <div class="team-avatar"><img src="officers/Andrew_LaSaliva.PNG" alt="Andrew LaSaliva"></div>
       <div class="team-info">
         <div class="team-name">Andrew LaSaliva</div>
         <div class="team-role">Grizzly Grind Reporter · Editor</div>
       </div>
     </div>
     <div class="team-card">
-      <div class="team-avatar">🗞️</div>
+      <div class="team-avatar"><img src="officers/Brayden.PNG" alt="Brayden Ramirez"></div>
       <div class="team-info">
-        <div class="team-name">Brayden</div>
-        <div class="team-role">Beyond the Den Reporter · Editor</div>
+        <div class="team-name">Brayden Ramirez</div>
+        <div class="team-role">Beyond the Den Reporter · Basha Joker · Editor</div>
       </div>
     </div>
     <div class="team-card">
-      <div class="team-avatar">🗞️</div>
+      <div class="team-avatar"><img src="officers/Devin.PNG" alt="Devin"></div>
       <div class="team-info">
         <div class="team-name">Devin</div>
         <div class="team-role">Beyond the Den Reporter · Editor</div>
@@ -466,10 +577,88 @@ el.addEventListener(‘click’, () => gtag(‘event’, ‘nav_click’, { even
     <div class="team-card">
       <div class="team-avatar">🗞️</div>
       <div class="team-info">
-        <div class="team-name">Andrew Jeeves</div>
-        <div class="team-role">Beyond the Den Reporter · Editor</div>
+        <div class="team-name">Eliana Sill</div>
+        <div class="team-role">Reporter · Editor</div>
       </div>
     </div>
+    <div class="team-card">
+      <div class="team-avatar"><img src="officers/Carter.PNG" alt="Carter Thomas"></div>
+      <div class="team-info">
+        <div class="team-name">Carter Thomas</div>
+        <div class="team-role">Basha Joker · Reporter · Editor</div>
+      </div>
+    </div>
+    <div class="team-card">
+      <div class="team-avatar"><img src="officers/Odelia.PNG" alt="Odelia Kossi"></div>
+      <div class="team-info">
+        <div class="team-name">Odelia Kossi</div>
+        <div class="team-role">Daily Update · Reporter · Editor</div>
+      </div>
+    </div>
+    <div class="team-card">
+      <div class="team-avatar">🎀</div>
+      <div class="team-info">
+        <div class="team-name">Ella</div>
+        <div class="team-role">Bear Buzz Host</div>
+      </div>
+    </div>
+    <div class="team-card">
+      <div class="team-avatar">🎙️</div>
+      <div class="team-info">
+        <div class="team-name">Lukas Bartalotta</div>
+        <div class="team-role">BBN Sports · Reporter · Editor</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOCIAL -->
+
+<section class="social-section" id="social">
+  <div class="social-header">
+    <div class="section-label">Stay Connected</div>
+    <h2 class="section-title">FOLLOW<br>THE NETWORK</h2>
+    <p class="social-intro">Catch every story, every game, every behind-the-scenes moment.</p>
+  </div>
+  <div class="social-grid">
+    <a href="https://www.instagram.com/bashabearnetwork" target="_blank" rel="noopener" class="social-card" data-platform="instagram" aria-label="Follow BBN on Instagram">
+      <div class="social-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+        </svg>
+      </div>
+      <div class="social-info">
+        <div class="social-platform">Instagram</div>
+        <div class="social-handle">@bashabearnetwork</div>
+      </div>
+      <div class="social-arrow">↗</div>
+    </a>
+    <a href="https://youtube.com/@bashabearnetwork" target="_blank" rel="noopener" class="social-card" data-platform="youtube" aria-label="Subscribe to BBN on YouTube">
+      <div class="social-icon">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+        </svg>
+      </div>
+      <div class="social-info">
+        <div class="social-platform">YouTube</div>
+        <div class="social-handle">@bashabearnetwork</div>
+      </div>
+      <div class="social-arrow">↗</div>
+    </a>
+    <a href="https://x.com/BashaNetwork" target="_blank" rel="noopener" class="social-card" data-platform="x" aria-label="Follow BBN on X">
+      <div class="social-icon">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/>
+        </svg>
+      </div>
+      <div class="social-info">
+        <div class="social-platform">X</div>
+        <div class="social-handle">@BashaNetwork</div>
+      </div>
+      <div class="social-arrow">↗</div>
+    </a>
   </div>
 </section>
 
@@ -479,13 +668,13 @@ el.addEventListener(‘click’, () => gtag(‘event’, ‘nav_click’, { even
 
 <section class="join" id="join">
   <div class="join-copy">
-    <div class="section-label">Get Involved</div>
+    <div class="section-label">How to Join</div>
     <h2 class="section-title">JOIN<br>THE<br>NETWORK</h2>
-    <p>Whether you're behind the camera, in front of it, or behind the scenes — BBN has a place for you. No experience required, just a passion for storytelling.</p>
-    <a href="mailto:skalitzky.glenda@cusd80.com?subject=Application%20to%20Join%20BBN&body=Hi%20BBN%2C%0A%0AMy%20name%20is%20_____%20and%20I%27d%20like%20to%20apply%20to%20join%20the%20Basha%20Bear%20Network%21%0A%0AGrade%20level%3A%20%0ARole%20I%27m%20interested%20in%3A%20%0AWhy%20I%20want%20to%20join%20BBN%3A%20%0A%0AThanks%21" class="btn-primary">Apply to Join BBN</a>
+    <p>BBN doesn't take applications. To become part of the crew, complete <strong style="color:var(--text);">MultiMedia &amp; Film Year 1</strong> as a freshman or sophomore — that's where you'll learn the foundations of broadcast journalism, video production, and storytelling. Once you've finished Year 1, you'll join the Basha Bear Network in Year 2 and start working on real broadcasts, sports streams, and competition pieces.</p>
+    <p style="margin-top:18px;color:var(--text-dim);">Talk to your counselor about adding MultiMedia &amp; Film to next year's schedule.</p>
   </div>
   <div class="join-visual">
-    <div class="join-visual-title">OPEN ROLES</div>
+    <div class="join-visual-title">ROLES IN BBN</div>
     <div class="join-item">
       <div class="join-bullet">🎤</div>
       <div class="join-item-text">
@@ -531,6 +720,7 @@ el.addEventListener(‘click’, () => gtag(‘event’, ‘nav_click’, { even
     <div class="footer-wordmark"><span>BB</span>N</div>
     <div class="footer-tagline">Basha Bear Network</div>
     <p>The official student broadcast and media program of Basha High School in Chandler, Arizona.</p>
+    <p style="margin-top:14px;font-size:12px;color:var(--gold);font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;">skalitzky.glenda@cusd80.com</p>
   </div>
   <div class="footer-col">
     <h4>Program</h4>
@@ -547,7 +737,6 @@ el.addEventListener(‘click’, () => gtag(‘event’, ‘nav_click’, { even
       <li><a href="#">Latest Episodes</a></li>
       <li><a href="#">Sports Highlights</a></li>
       <li><a href="#">Special Features</a></li>
-      <li><a href="#">Archive</a></li>
     </ul>
   </div>
   <div class="footer-col">
@@ -556,12 +745,12 @@ el.addEventListener(‘click’, () => gtag(‘event’, ‘nav_click’, { even
       <li><a href="https://www.instagram.com/bashabearnetwork" target="_blank" rel="noopener">Instagram</a></li>
       <li><a href="https://youtube.com/@bashabearnetwork" target="_blank" rel="noopener">YouTube</a></li>
       <li><a href="https://x.com/BashaNetwork" target="_blank" rel="noopener">Twitter / X</a></li>
-      <li><a href="mailto:skalitzky.glenda@cusd80.com?subject=Hello%20BBN&body=Hi%20BBN%2C%0A%0A%5BYour%20message%20here%5D%0A%0AThanks%21">Email Us</a></li>
+      <li><a href="https://mail.google.com/mail/?view=cm&fs=1&to=skalitzky.glenda%40cusd80.com&su=Hello+BBN&body=Hi+BBN%2C%0A%0A%5BYour+message+here%5D%0A%0AThanks%21" target="_blank" rel="noopener">Email Us</a></li>
     </ul>
   </div>
 </footer>
 <div class="footer-bottom">
-  <p>© 2025–2026 <span>Basha Bear Network</span> · Basha High School · Chandler, AZ</p>
+  <p>© 2026–2027 <span>Basha Bear Network</span> · Basha High School · Chandler, AZ</p>
   <p>Student Media · <span>100% Student Produced</span></p>
 </div>
 
