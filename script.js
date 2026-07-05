@@ -19,12 +19,11 @@ document.querySelectorAll('.show-card, .about-card, .team-card, .join-item, .awa
 // Priority order (live always wins over Thursday):
 // 1. Live stream → "ON AIR"     (red, default styling)
 // 2. Thursday    → "RECORDING"  (red, default styling)
-// 3. Otherwise   → rotates EST. 2022 / WEEKLY NEWS in gold/green every 4s
+// 3. Otherwise   → "WEEKLY NEWS" brand idle (gold/green)
 //
 // State 3 uses the brand-mode class which styles.css overrides to
 // gold background + BBN green text/dot.
 // Uses the visitor's local timezone — fine for BBN's Chandler-based audience.
-var _onAirRotateInterval = null;
 var _onAirFadeTimeout = null;
 
 function updateOnAirBadge(isLive) {
@@ -35,31 +34,13 @@ function updateOnAirBadge(isLive) {
   var RECORDING_DAY = 4; // Sun=0, Mon=1, Tue=2, Wed=3, Thu=4, Fri=5, Sat=6
   var isRecordingDay = new Date().getDay() === RECORDING_DAY;
 
-  // Reset: cancel any pending fade + rotation, clear brand class
+  // Reset: cancel any pending fade, clear brand class
   if (_onAirFadeTimeout) {
     clearTimeout(_onAirFadeTimeout);
     _onAirFadeTimeout = null;
   }
-  if (_onAirRotateInterval) {
-    clearInterval(_onAirRotateInterval);
-    _onAirRotateInterval = null;
-  }
   badge.classList.remove('brand-mode');
   badge.style.display = '';
-
-  // Smooth crossfade when swapping text. Tracks the timeout so it can be
-  // cancelled if updateOnAirBadge is called again mid-fade (prevents the
-  // pending swap from corrupting fresh state).
-  function fadeSwap(newText) {
-    if (!textEl) return;
-    textEl.style.transition = 'opacity 0.3s ease';
-    textEl.style.opacity = '0';
-    _onAirFadeTimeout = setTimeout(function() {
-      textEl.textContent = newText;
-      textEl.style.opacity = '1';
-      _onAirFadeTimeout = null;
-    }, 300);
-  }
 
   function setText(newText) {
     if (!textEl) return;
@@ -78,75 +59,62 @@ function updateOnAirBadge(isLive) {
     setText('WEEKLY NEWS');
   }
 }
-// Initial state: assume not live; checkLiveStatus will flip it on if a stream is detected
+// Initial state: assume not live; the status fetch below flips it on
 updateOnAirBadge(false);
 
-// ─── Auto-fetch latest BBN episode from the channel uploads feed ───
-// Filters for "Basha Bear Network Episode" titles. If the API call fails,
-// falls back to the playlist's video-series embed so visitors still get
-// current content rather than a hardcoded stale episode.
-(function fetchLatestEpisode() {
+// ─── Broadcast status: single fetch from our own status.json ───
+// status.json lives in this repo and is updated by the "Broadcast Status"
+// GitHub Action (manual live on/off trigger + daily latest-episode refresh).
+// No third-party proxies: visitors only ever talk to bashabearnetwork.org.
+//
+// The ?t= cache-buster matters — GitHub Pages' CDN caches files for up to
+// 10 minutes, and a unique query string forces a fresh copy each poll.
+(function broadcastStatus() {
   var CHANNEL_ID = 'UCWQG8OvkNCZ3405ZMXgZ3dA';
   var PLAYLIST_ID = 'PLk3YT4kiAMWmCY2ZQiKBitpF5NP2DAilZ';
-  var rssUrl = 'https://www.youtube.com/feeds/videos.xml?channel_id=' + CHANNEL_ID;
-  var apiUrl = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(rssUrl);
+  var VALID_ID = /^[A-Za-z0-9_-]{11}$/;
+  var POLL_MS = 60000;
 
-  var iframe = document.getElementById('latest-episode-embed');
-  var note = document.getElementById('latest-episode-title');
+  var _lastApplied = ''; // avoid re-touching the DOM when nothing changed
 
-  fetch(apiUrl)
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      if (!data || !data.items || !data.items.length) throw new Error('No items returned');
+  // Safe note builder: bold title + plain suffix, all via textContent —
+  // nothing from the network is ever parsed as HTML.
+  function setNote(el, boldText, suffix) {
+    if (!el) return;
+    var strong = document.createElement('strong');
+    strong.style.color = 'var(--text)';
+    strong.textContent = boldText;
+    el.replaceChildren(strong, document.createTextNode(suffix || ''));
+  }
 
-      // Primary filter: "Basha Bear Network Episode #"
-      var episodes = data.items.filter(function(item) {
-        return /basha bear network episode/i.test(item.title);
-      });
-      // Fallback 1: anything with "Episode" in the title
-      if (!episodes.length) {
-        episodes = data.items.filter(function(item) {
-          return /episode/i.test(item.title);
-        });
-      }
-      // Fallback 2: just use the newest upload of any kind
-      if (!episodes.length) episodes = data.items;
+  function formatDate(iso) {
+    if (!iso) return '';
+    var d = new Date(iso);
+    if (isNaN(d)) return '';
+    return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  }
 
-      // Sort newest first, regardless of feed order
-      episodes.sort(function(a, b) { return new Date(b.pubDate) - new Date(a.pubDate); });
-      var latest = episodes[0];
+  function applyLatestEpisode(ep) {
+    var iframe = document.getElementById('latest-episode-embed');
+    var note = document.getElementById('latest-episode-title');
 
-      var match = latest.link.match(/[?&]v=([^&]+)/);
-      if (!match) throw new Error('No video ID in latest item');
-      var videoId = match[1];
-
-      if (iframe) iframe.src = 'https://www.youtube-nocookie.com/embed/' + videoId;
-      if (note) {
-        var date = latest.pubDate ? new Date(latest.pubDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '';
-        note.innerHTML = '<strong style="color:var(--text);">' + latest.title + '</strong>' + (date ? ' &middot; ' + date : '');
-      }
-    })
-    .catch(function(err) {
-      console.warn('Latest episode fetch failed:', err);
+    if (ep && VALID_ID.test(ep.videoId || '')) {
+      var src = 'https://www.youtube-nocookie.com/embed/' + ep.videoId;
+      if (iframe && iframe.src !== src) iframe.src = src;
+      var date = formatDate(ep.published);
+      setNote(note, ep.title || 'Latest episode', date ? ' \u00B7 ' + date : '');
+    } else {
+      // Fallback: playlist embed so visitors still get current content
       if (iframe) iframe.src = 'https://www.youtube-nocookie.com/embed/videoseries?list=' + PLAYLIST_ID;
-      if (note) note.innerHTML = 'Watch the latest from <a href="https://www.youtube.com/playlist?list=' + PLAYLIST_ID + '" target="_blank">the Weekly Episodes playlist</a>.';
-    });
-})();
-
-// ─── Auto-detect BBN livestream status ───
-// Uses a public CORS proxy to check the /live URL — if BBN is currently streaming,
-// YouTube redirects /live to the actual watch URL. If not, no redirect.
-(function checkLiveStatus() {
-  var CHANNEL_HANDLE = 'bashabearnetwork';
-  var liveCheckUrl = 'https://www.youtube.com/@' + CHANNEL_HANDLE + '/live';
-  var proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(liveCheckUrl);
-
-  function showOffline() {
-    var indicator = document.getElementById('live-indicator');
-    if (indicator) indicator.classList.add('offline');
-    var label = document.getElementById('live-status-label');
-    if (label) label.textContent = 'Off Air';
-    updateOnAirBadge(false); // hero badge falls back to RECORDING (Thursdays) or brand idle rotation
+      if (note) {
+        var link = document.createElement('a');
+        link.href = 'https://www.youtube.com/playlist?list=' + PLAYLIST_ID;
+        link.target = '_blank';
+        link.rel = 'noopener';
+        link.textContent = 'the Weekly Episodes playlist';
+        note.replaceChildren(document.createTextNode('Watch the latest from '), link, document.createTextNode('.'));
+      }
+    }
   }
 
   function showLive(videoId, title) {
@@ -154,36 +122,66 @@ updateOnAirBadge(false);
     var iframe = document.getElementById('live-embed');
     var label = document.getElementById('live-status-label');
     var indicator = document.getElementById('live-indicator');
+
     if (indicator) indicator.classList.remove('offline');
     if (offline) offline.style.display = 'none';
     if (iframe) {
-      iframe.src = 'https://www.youtube-nocookie.com/embed/' + videoId + '?autoplay=0';
+      // Specific video ID if one was provided, otherwise YouTube's
+      // channel live embed automatically shows the current stream.
+      var src = VALID_ID.test(videoId || '')
+        ? 'https://www.youtube-nocookie.com/embed/' + videoId + '?autoplay=0'
+        : 'https://www.youtube-nocookie.com/embed/live_stream?channel=' + CHANNEL_ID;
+      if (iframe.src !== src) iframe.src = src;
       iframe.style.display = 'block';
     }
     if (label) label.textContent = 'LIVE NOW';
-    var note = document.getElementById('live-note');
-    if (note && title) note.innerHTML = '<strong style="color:var(--text);">' + title + '</strong> · Live now on the Basha Bear Network';
+    setNote(document.getElementById('live-note'), title || 'BBN Live', ' \u00B7 Live now on the Basha Bear Network');
     updateOnAirBadge(true);
   }
 
-  fetch(proxyUrl)
-    .then(function(r) { return r.text(); })
-    .then(function(html) {
-      // When channel is live, the HTML contains the live video ID in canonical/og:url meta tags.
-      // Forward slashes inside the URLs are escaped so the regex literal doesn't terminate early.
-      var canonicalMatch = html.match(/<link rel="canonical" href="https:\/\/www\.youtube\.com\/watch\?v=([^"&]+)"/);
-      var ogMatch        = html.match(/<meta property="og:url" content="https:\/\/www\.youtube\.com\/watch\?v=([^"&]+)"/);
-      var match = canonicalMatch || ogMatch;
-      if (match && match[1]) {
-        var titleMatch = html.match(/<meta property="og:title" content="([^"]+)"/);
-        var title = titleMatch ? titleMatch[1] : '';
-        showLive(match[1], title);
-      } else {
-        showOffline();
-      }
-    })
-    .catch(function(err) {
-      console.log('Live status check failed:', err);
-      showOffline();
-    });
+  function showOffline() {
+    var offline = document.getElementById('live-offline');
+    var iframe = document.getElementById('live-embed');
+    var label = document.getElementById('live-status-label');
+    var indicator = document.getElementById('live-indicator');
+
+    if (indicator) indicator.classList.add('offline');
+    if (iframe) {
+      iframe.style.display = 'none';
+      iframe.removeAttribute('src');
+    }
+    if (offline) offline.style.display = '';
+    if (label) label.textContent = 'Off Air';
+    updateOnAirBadge(false);
+  }
+
+  function refresh() {
+    fetch('status.json?t=' + Date.now(), { cache: 'no-store' })
+      .then(function(r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
+      .then(function(status) {
+        var key = JSON.stringify(status);
+        if (key === _lastApplied) return; // nothing changed since last poll
+        _lastApplied = key;
+
+        applyLatestEpisode(status.latestEpisode);
+        if (status.live) {
+          showLive(status.videoId, status.title);
+        } else {
+          showOffline();
+        }
+      })
+      .catch(function(err) {
+        console.warn('Status fetch failed:', err);
+        if (!_lastApplied) { // only force fallbacks if we never got a good read
+          applyLatestEpisode(null);
+          showOffline();
+        }
+      });
+  }
+
+  refresh();
+  setInterval(refresh, POLL_MS); // viewers with the tab open see the flip within ~1 min
 })();
