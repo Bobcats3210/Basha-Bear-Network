@@ -1521,3 +1521,42 @@
   object-fit: contain;
   vertical-align: middle;
 }
+
+/* ───────────────────────────────────────────────────────────────
+   FOOTER PARTNER LOGOS — CUSD80 + CTE in bottom-right of footer
+   ─────────────────────────────────────────────────────────────── */
+
+.footer-bottom-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.footer-partners {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.footer-partner-logo {
+  height: 36px;
+  width: auto;
+  display: block;
+  opacity: 0.75;
+  border-radius: 3px;
+  transition: opacity 0.3s ease;
+}
+
+.footer-partner-logo:hover {
+  opacity: 1;
+}
+
+@media (max-width: 780px) {
+  .footer-partners {
+    gap: 12px;
+    justify-content: center;
+  }
+  .footer-partner-logo {
+    height: 30px;
+  }
+}
