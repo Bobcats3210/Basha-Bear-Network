@@ -1,7 +1,11 @@
 {
-  "live": false,
+  "live": true,
   "videoId": "",
   "title": "",
-  "latestEpisode": {},
-  "updated": "2026-07-05T00:00:00+00:00"
+  "latestEpisode": {
+    "videoId": "Yicm6XLlMEE",
+    "title": "Basha Bear News Episode 33 (5/21/26)",
+    "published": "2026-05-21T15:41:52+00:00"
+  },
+  "updated": "2026-07-05T23:19:11.905233+00:00"
 }
