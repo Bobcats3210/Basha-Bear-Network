@@ -173,7 +173,7 @@
     position: absolute;
     inset: 0;
     opacity: 0.03;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='https://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
     background-size: 256px;
   }
   .on-air-badge {
@@ -1511,4 +1511,13 @@
     margin: 60px auto;
     padding: 0 20px;
   }
+}
+
+/* Hero stat bear logo — sizes to match the other stat-num text height */
+.stat-bear-img {
+  height: 1.2em;
+  width: auto;
+  display: block;
+  object-fit: contain;
+  vertical-align: middle;
 }
