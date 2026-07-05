@@ -25,6 +25,7 @@ on:
 
 permissions:
   contents: write
+  pages: write
 
 concurrency:
   group: broadcast-status
@@ -64,23 +65,9 @@ jobs:
           status.setdefault("latestEpisode", {})
           before = copy.deepcopy(status)
 
-          # ── Manual trigger: flip live status ──
-          if os.environ.get("EVENT") == "workflow_dispatch":
-              is_live = os.environ.get("STATUS", "off") == "live"
-              status["live"] = is_live
-
-              vid = ""
-              raw = os.environ.get("VIDEO", "").strip()
-              if raw:
-                  m = re.search(r"(?:v=|youtu\.be/|/live/|/embed/)([A-Za-z0-9_-]{11})", raw)
-                  if m:
-                      vid = m.group(1)
-                  elif VALID_ID.match(raw):
-                      vid = raw
-              status["videoId"] = vid if is_live else ""
-              status["title"] = os.environ.get("TITLE", "").strip()[:200] if is_live else ""
-
-          # ── Every run: refresh latest episode from the uploads RSS feed ──
+          # ── Fetch the channel uploads RSS feed (used for both title lookup
+          #    and the latest-episode refresh) ──
+          entries = []
           try:
               feed = urllib.request.urlopen(
                   "https://www.youtube.com/feeds/videos.xml?channel_id=" + CHANNEL_ID,
@@ -90,25 +77,58 @@ jobs:
                   "a": "http://www.w3.org/2005/Atom",
                   "yt": "http://www.youtube.com/xml/schemas/2015",
               }
-              entries = []
               for e in ET.fromstring(feed).findall("a:entry", ns):
                   entries.append({
                       "videoId": (e.findtext("yt:videoId", "", ns) or "").strip(),
                       "title": (e.findtext("a:title", "", ns) or "").strip(),
                       "published": (e.findtext("a:published", "", ns) or "").strip(),
                   })
+          except Exception as ex:
+              print("RSS fetch failed:", ex)
 
+          # ── Manual trigger: flip live status ──
+          if os.environ.get("EVENT") == "workflow_dispatch":
+              is_live = os.environ.get("STATUS", "off") == "live"
+              status["live"] = is_live
+              title_in = os.environ.get("TITLE", "").strip()
+
+              vid = ""
+              raw = os.environ.get("VIDEO", "").strip()
+              if raw:
+                  m = re.search(r"(?:v=|youtu\.be/|/live/|/embed/)([A-Za-z0-9_-]{11})", raw)
+                  if m:
+                      vid = m.group(1)
+                  elif VALID_ID.match(raw):
+                      vid = raw
+
+              # No usable URL/ID but a title was given → find the stream in the
+              # channel feed by title (case-insensitive, ignores extra spaces).
+              matched_title = ""
+              if is_live and not vid and title_in:
+                  needle = re.sub(r"\s+", " ", title_in).lower()
+                  for e in entries:
+                      hay = re.sub(r"\s+", " ", e["title"]).lower()
+                      if needle in hay and VALID_ID.match(e["videoId"]):
+                          vid = e["videoId"]
+                          matched_title = e["title"]
+                          print("Title match:", e["title"], "->", vid)
+                          break
+                  if not vid:
+                      print("No title match in feed — falling back to channel live embed.")
+
+              status["videoId"] = vid if is_live else ""
+              status["title"] = (matched_title or title_in)[:200] if is_live else ""
+
+          # ── Every run: refresh latest episode ──
+          if entries:
               eps = [e for e in entries if re.search(r"basha bear network episode", e["title"], re.I)]
               if not eps:
                   eps = [e for e in entries if re.search(r"episode", e["title"], re.I)]
               if not eps:
                   eps = entries
               eps.sort(key=lambda e: e["published"], reverse=True)
-
               if eps and VALID_ID.match(eps[0]["videoId"]):
                   status["latestEpisode"] = eps[0]
-          except Exception as ex:
-              print("RSS refresh skipped:", ex)
 
           if status == before:
               print("No changes — skipping write.")
@@ -120,13 +140,24 @@ jobs:
           EOF
 
       - name: Commit and push
+        id: commit
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add status.json
           if git diff --cached --quiet; then
             echo "Nothing to commit."
+            echo "pushed=false" >> "$GITHUB_OUTPUT"
           else
             git commit -m "Update broadcast status"
             git push
+            echo "pushed=true" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Trigger Pages rebuild
+        if: steps.commit.outputs.pushed == 'true'
+        run: |
+          curl -s -X POST \
+            -H "Authorization: Bearer ${{ github.token }}" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/${{ github.repository }}/pages/builds
