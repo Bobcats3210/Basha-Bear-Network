@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       status:
-        description: "Broadcast status"
+        description: "Manual override (auto-detection resumes after 4 hours)"
         required: true
         type: choice
         options:
@@ -12,7 +12,7 @@ on:
           - off
         default: live
       video:
-        description: "Optional: live watch URL or 11-char video ID (blank = auto channel live embed)"
+        description: "Optional: live watch URL or 11-char video ID"
         required: false
         default: ""
       title:
@@ -20,6 +20,8 @@ on:
         required: false
         default: ""
   schedule:
+    # Auto-check live status every 5 minutes (GitHub may delay runs 5-20 min)
+    - cron: "*/5 * * * *"
     # Fridays at 19:00 UTC = 12:00 PM Arizona (AZ has no DST) — refresh the latest episode
     - cron: "0 19 * * 5"
 
@@ -45,13 +47,26 @@ jobs:
           TITLE: ${{ inputs.title }}
         run: |
           python3 - <<'EOF'
-          import json, os, re, copy, urllib.request
+          import json, os, re, copy, html as htmllib, urllib.request
           import xml.etree.ElementTree as ET
-          from datetime import datetime, timezone
+          from datetime import datetime, timezone, timedelta
 
           PATH = "status.json"
           CHANNEL_ID = "UCWQG8OvkNCZ3405ZMXgZ3dA"
+          CHANNEL_HANDLE = "bashabearnetwork"
           VALID_ID = re.compile(r"^[A-Za-z0-9_-]{11}$")
+          OVERRIDE_HOURS = 4     # manual trigger blocks auto-detection this long
+          HEARTBEAT_DAYS = 20    # commit at least this often so GitHub never
+                                 # disables the schedule for repo inactivity
+
+          def now_utc():
+              return datetime.now(timezone.utc)
+
+          def parse_iso(s):
+              try:
+                  return datetime.fromisoformat(s)
+              except Exception:
+                  return None
 
           try:
               with open(PATH) as f:
@@ -63,10 +78,10 @@ jobs:
           status.setdefault("videoId", "")
           status.setdefault("title", "")
           status.setdefault("latestEpisode", {})
+          status.setdefault("manualUntil", "")
           before = copy.deepcopy(status)
 
-          # ── Fetch the channel uploads RSS feed (used for both title lookup
-          #    and the latest-episode refresh) ──
+          # ── Fetch the channel uploads RSS feed (title lookup + latest episode) ──
           entries = []
           try:
               feed = urllib.request.urlopen(
@@ -86,10 +101,11 @@ jobs:
           except Exception as ex:
               print("RSS fetch failed:", ex)
 
-          # ── Manual trigger: flip live status ──
           if os.environ.get("EVENT") == "workflow_dispatch":
+              # ── Manual trigger: set state and block auto-detection for a while ──
               is_live = os.environ.get("STATUS", "off") == "live"
               status["live"] = is_live
+              status["manualUntil"] = (now_utc() + timedelta(hours=OVERRIDE_HOURS)).isoformat()
               title_in = os.environ.get("TITLE", "").strip()
 
               vid = ""
@@ -101,8 +117,7 @@ jobs:
                   elif VALID_ID.match(raw):
                       vid = raw
 
-              # No usable URL/ID but a title was given → find the stream in the
-              # channel feed by title (case-insensitive, ignores extra spaces).
+              # No usable URL/ID but a title was given → find it in the feed
               matched_title = ""
               if is_live and not vid and title_in:
                   needle = re.sub(r"\s+", " ", title_in).lower()
@@ -119,9 +134,50 @@ jobs:
               status["videoId"] = vid if is_live else ""
               status["title"] = (matched_title or title_in)[:200] if is_live else ""
 
-          # ── Every run: refresh latest episode ──
+          else:
+              # ── Scheduled run: auto-detect live status from the /live page ──
+              override = parse_iso(status.get("manualUntil", ""))
+              if override and now_utc() < override:
+                  print("Manual override active until", status["manualUntil"], "— skipping auto-detection.")
+              else:
+                  try:
+                      req = urllib.request.Request(
+                          "https://www.youtube.com/@" + CHANNEL_HANDLE + "/live",
+                          headers={
+                              "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                                            "AppleWebKit/537.36 (KHTML, like Gecko) "
+                                            "Chrome/126.0.0.0 Safari/537.36",
+                              "Accept-Language": "en-US,en;q=0.9",
+                          },
+                      )
+                      page = urllib.request.urlopen(req, timeout=25).read().decode("utf-8", "replace")
+
+                      if "ytInitialData" not in page and "ytInitialPlayerResponse" not in page:
+                          # Consent wall / bot check — not a real page, keep previous state
+                          print("Got a non-standard page (likely bot check) — keeping previous state.")
+                      elif '"isLiveNow":true' in page:
+                          vid, title = "", ""
+                          m = re.search(r'<link rel="canonical" href="https://www\.youtube\.com/watch\?v=([^"&]+)"', page)
+                          if m and VALID_ID.match(m.group(1)):
+                              vid = m.group(1)
+                          t = re.search(r'<meta property="og:title" content="([^"]*)"', page)
+                          if t:
+                              title = htmllib.unescape(t.group(1)).strip()[:200]
+                          status["live"] = True
+                          status["videoId"] = vid
+                          status["title"] = title
+                          print("LIVE detected:", vid, title)
+                      else:
+                          status["live"] = False
+                          status["videoId"] = ""
+                          status["title"] = ""
+                          print("Not live.")
+                  except Exception as ex:
+                      print("Live check failed — keeping previous state:", ex)
+
+          # ── Refresh latest episode ──
           if entries:
-              eps = [e for e in entries if re.search(r"basha bear network episode", e["title"], re.I)]
+              eps = [e for e in entries if re.search(r"basha bear (network|news) episode", e["title"], re.I)]
               if not eps:
                   eps = [e for e in entries if re.search(r"episode", e["title"], re.I)]
               if not eps:
@@ -130,10 +186,15 @@ jobs:
               if eps and VALID_ID.match(eps[0]["videoId"]):
                   status["latestEpisode"] = eps[0]
 
-          if status == before:
+          # ── Heartbeat: force a commit occasionally so the schedule never gets
+          #    disabled for repo inactivity ──
+          last = parse_iso(status.get("updated", ""))
+          stale = (not last) or (now_utc() - last > timedelta(days=HEARTBEAT_DAYS))
+
+          if status == before and not stale:
               print("No changes — skipping write.")
           else:
-              status["updated"] = datetime.now(timezone.utc).isoformat()
+              status["updated"] = now_utc().isoformat()
               with open(PATH, "w") as f:
                   json.dump(status, f, indent=2)
               print(json.dumps(status, indent=2))
