@@ -20,18 +20,21 @@ on:
         required: false
         default: ""
   schedule:
-    # Auto-check live status every 5 minutes (GitHub may delay runs 5-20 min)
-    - cron: "*/5 * * * *"
-    # Fridays at 19:00 UTC = 12:00 PM Arizona (AZ has no DST) — refresh the latest episode
-    - cron: "0 19 * * 5"
+    # Hourly (offset from :00 — GitHub drops top-of-the-hour crons more often).
+    # Each run polls every 5 minutes for the following hour, so the effective
+    # check rate is every 5 minutes even though the cron only fires hourly.
+    - cron: "7 * * * *"
 
 permissions:
   contents: write
   pages: write
 
+# Manual runs and the hourly poller get separate lanes so pressing the button
+# never waits behind the hour-long poll job. A new hourly run cancels the
+# previous one if it's somehow still going.
 concurrency:
-  group: broadcast-status
-  cancel-in-progress: false
+  group: broadcast-${{ github.event_name }}
+  cancel-in-progress: ${{ github.event_name == 'schedule' }}
 
 jobs:
   update:
@@ -39,14 +42,29 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Update status.json
+      - name: Check status (every 5 min for scheduled runs, once for manual)
         env:
           EVENT: ${{ github.event_name }}
           STATUS: ${{ inputs.status }}
           VIDEO: ${{ inputs.video }}
           TITLE: ${{ inputs.title }}
         run: |
-          python3 - <<'EOF'
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          if [ "$EVENT" = "workflow_dispatch" ]; then
+            ITERATIONS=1
+          else
+            ITERATIONS=12   # 12 checks x 5 min = covers the hour until the next run
+          fi
+
+          for i in $(seq 1 "$ITERATIONS"); do
+            [ "$i" -gt 1 ] && sleep 300
+
+            # Pick up anything committed meanwhile (manual overrides, etc.)
+            git pull --rebase --quiet || true
+
+            python3 - <<'PYEOF'
           import json, os, re, copy, html as htmllib, urllib.request
           import xml.etree.ElementTree as ET
           from datetime import datetime, timezone, timedelta
@@ -81,7 +99,7 @@ jobs:
           status.setdefault("manualUntil", "")
           before = copy.deepcopy(status)
 
-          # ── Fetch the channel uploads RSS feed (title lookup + latest episode) ──
+          # ── Channel uploads RSS feed (title lookup + latest episode) ──
           entries = []
           try:
               feed = urllib.request.urlopen(
@@ -102,7 +120,7 @@ jobs:
               print("RSS fetch failed:", ex)
 
           if os.environ.get("EVENT") == "workflow_dispatch":
-              # ── Manual trigger: set state and block auto-detection for a while ──
+              # ── Manual trigger: set state, block auto-detection for a while ──
               is_live = os.environ.get("STATUS", "off") == "live"
               status["live"] = is_live
               status["manualUntil"] = (now_utc() + timedelta(hours=OVERRIDE_HOURS)).isoformat()
@@ -117,7 +135,6 @@ jobs:
                   elif VALID_ID.match(raw):
                       vid = raw
 
-              # No usable URL/ID but a title was given → find it in the feed
               matched_title = ""
               if is_live and not vid and title_in:
                   needle = re.sub(r"\s+", " ", title_in).lower()
@@ -135,7 +152,7 @@ jobs:
               status["title"] = (matched_title or title_in)[:200] if is_live else ""
 
           else:
-              # ── Scheduled run: auto-detect live status from the /live page ──
+              # ── Scheduled check: auto-detect live status from the /live page ──
               override = parse_iso(status.get("manualUntil", ""))
               if override and now_utc() < override:
                   print("Manual override active until", status["manualUntil"], "— skipping auto-detection.")
@@ -153,7 +170,6 @@ jobs:
                       page = urllib.request.urlopen(req, timeout=25).read().decode("utf-8", "replace")
 
                       if "ytInitialData" not in page and "ytInitialPlayerResponse" not in page:
-                          # Consent wall / bot check — not a real page, keep previous state
                           print("Got a non-standard page (likely bot check) — keeping previous state.")
                       elif '"isLiveNow":true' in page:
                           vid, title = "", ""
@@ -186,39 +202,30 @@ jobs:
               if eps and VALID_ID.match(eps[0]["videoId"]):
                   status["latestEpisode"] = eps[0]
 
-          # ── Heartbeat: force a commit occasionally so the schedule never gets
-          #    disabled for repo inactivity ──
+          # ── Heartbeat: force a commit occasionally so the schedule never
+          #    gets disabled for repo inactivity ──
           last = parse_iso(status.get("updated", ""))
           stale = (not last) or (now_utc() - last > timedelta(days=HEARTBEAT_DAYS))
 
           if status == before and not stale:
-              print("No changes — skipping write.")
+              print("No changes.")
           else:
               status["updated"] = now_utc().isoformat()
               with open(PATH, "w") as f:
                   json.dump(status, f, indent=2)
-              print(json.dumps(status, indent=2))
-          EOF
+          PYEOF
 
-      - name: Commit and push
-        id: commit
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add status.json
-          if git diff --cached --quiet; then
-            echo "Nothing to commit."
-            echo "pushed=false" >> "$GITHUB_OUTPUT"
-          else
-            git commit -m "Update broadcast status"
-            git push
-            echo "pushed=true" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Trigger Pages rebuild
-        if: steps.commit.outputs.pushed == 'true'
-        run: |
-          curl -s -X POST \
-            -H "Authorization: Bearer ${{ github.token }}" \
-            -H "Accept: application/vnd.github+json" \
-            https://api.github.com/repos/${{ github.repository }}/pages/builds
+            # Commit + push + trigger a Pages rebuild only when something changed
+            if ! git diff --quiet status.json; then
+              git add status.json
+              git commit -m "Update broadcast status"
+              git push || { git pull --rebase && git push; }
+              curl -s -X POST \
+                -H "Authorization: Bearer ${{ github.token }}" \
+                -H "Accept: application/vnd.github+json" \
+                "https://api.github.com/repos/${{ github.repository }}/pages/builds"
+              echo "Committed and triggered Pages rebuild (check $i/$ITERATIONS)."
+            else
+              echo "No changes (check $i/$ITERATIONS)."
+            fi
+          done
