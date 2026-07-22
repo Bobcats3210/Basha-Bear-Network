@@ -1743,3 +1743,38 @@
     font-size: 24px;
   }
 }
+
+/* ───────────────────────────────────────────────────────────────
+   TEAM SUBSECTIONS — Officers / Members split
+   ─────────────────────────────────────────────────────────────── */
+
+.team-subsection {
+  margin-bottom: 60px;
+}
+
+.team-subsection:last-child {
+  margin-bottom: 0;
+}
+
+.team-subtitle {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 32px;
+  letter-spacing: 3px;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(249, 223, 141, 0.15);
+  line-height: 1;
+}
+
+@media (max-width: 900px) {
+  .team-subtitle {
+    font-size: 26px;
+    letter-spacing: 2px;
+    margin-bottom: 18px;
+  }
+  .team-subsection {
+    margin-bottom: 40px;
+  }
+}
