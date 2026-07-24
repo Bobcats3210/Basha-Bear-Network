@@ -1945,3 +1945,29 @@
     text-align: center;
   }
 }
+
+/* Sponsors CTA: stacked buttons — info PDF (secondary) above contact (primary) */
+.sponsors-cta-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.sponsors-cta-btn-secondary {
+  background: transparent;
+  color: var(--gold);
+  border: 1px solid var(--gold);
+}
+
+.sponsors-cta-btn-secondary:hover {
+  background: rgba(249, 223, 141, 0.12);
+  color: var(--text);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 780px) {
+  .sponsors-cta-buttons {
+    width: 100%;
+  }
+}
